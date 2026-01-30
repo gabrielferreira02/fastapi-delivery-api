@@ -1,1 +1,3 @@
 # fastapi-delivery-api
+
+Em desenvolvimento...
