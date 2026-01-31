@@ -1,4 +1,4 @@
-from base import Base
+from app.models.base import Base
 from sqlalchemy import Column, String, UUID
 
 class Category(Base):

@@ -1,4 +1,4 @@
-from base import Base
+from app.models.base import Base
 from sqlalchemy import Column, Enum, UUID, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func

@@ -1,4 +1,4 @@
-from base import Base
+from app.models.base import Base
 from sqlalchemy import Column, UUID, String, Float, Boolean, ForeignKey
 
 class Product(Base):
