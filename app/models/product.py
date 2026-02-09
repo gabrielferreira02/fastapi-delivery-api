@@ -7,20 +7,21 @@ class Product(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column("name", String, nullable=False)
-    slug = Column("slug", String, nullable=False)
+    slug = Column("slug", String, nullable=False, unique=True)
     description = Column("description", String, nullable=False)
     price = Column("price", Float, nullable=False)
     category_id = Column("category_id", ForeignKey("category_db.id"), nullable=False)
     is_active = Column("is_active", Boolean, default=True)
     image_url = Column("image_url", String)
 
-    def __init__(self, name, slug, description, price, category_id, is_active=True):
+    def __init__(self, name, slug, description, price, category_id, image_url, is_active=True):
         self.name = name
         self.slug = slug
         self.description = description
         self.price = price
         self.category_id = category_id
         self.is_active = is_active
+        self.image_url = image_url
     
 
 
