@@ -1,26 +1,26 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.api.deps import get_session
+from app.api.deps import get_session, verify_token
 from app.services.auth_service import AuthService
+from app.schemas.auth_schemas import RegisterSchema, LoginSchema
+from app.schemas.user_schemas import UserResponseSchema
+from app.models.user import User
+from fastapi.security import OAuth2PasswordRequestForm
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-@auth_router.post("/register")
-async def register(session: Session = Depends(get_session)):
-    AuthService.register(session)
-    pass
+@auth_router.post("/register", response_model=UserResponseSchema)
+async def register(body: RegisterSchema, session: Session = Depends(get_session)):
+    return AuthService.register(body, session)
 
 @auth_router.post("/login")
-async def login(session: Session = Depends(get_session)):
-    AuthService.login(session)
-    pass
+async def login(body: LoginSchema, session: Session = Depends(get_session)):
+    return AuthService.login(body, session)
 
 @auth_router.post("/refresh")
-async def refresh_token(session: Session = Depends(get_session)):
-    AuthService.refresh_token(session)
-    pass
+async def refresh_token(user: User = Depends(verify_token)):
+    return AuthService.refresh_token(user)
 
-@auth_router.post("/forgot-password")
-async def forgot_password(session: Session = Depends(get_session)):
-    AuthService.forgot_password(session)
-    pass
+@auth_router.post("/login-docs")
+async def login_docs(body: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
+    return AuthService.login_docs(body, session)
