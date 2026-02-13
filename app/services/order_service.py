@@ -9,7 +9,10 @@ from fastapi import HTTPException
 from app.enums.order_status import OrderStatus
 
 class OrderService:
-    def create_order(body: CreateOrderSchema, session: Session):
+    def create_order(body: CreateOrderSchema, session: Session, auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="É preciso estar logado para fazer um pedido")
+        
         user = session.query(User).filter(User.id == body.user_id).first()
 
         if not user:
@@ -17,6 +20,9 @@ class OrderService:
 
         if not body.items:
             raise HTTPException(status_code=400, detail="Pedido inválido. Precisa conter ao menos um produto")
+        
+        if auth_user.id != user.id:
+            raise HTTPException(status_code=403, detail="Operação não autorizada")
         
         order = Order(user.id, OrderStatus.OPEN)
         session.add(order)
@@ -46,20 +52,37 @@ class OrderService:
         
         return order
 
-    def list_user_orders(id: UUID, session: Session):
+    def list_user_orders(id: UUID, session: Session, auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="É preciso estar logado para acessar as informações")
+        if not auth_user.is_admin and auth_user != id:
+            raise HTTPException(status_code=403, detail="Acesso não permitido as informações")
+        
         orders = session.query(Order).filter(Order.user_id == id).all()
         return orders
 
-    def get_order_by_id(id: UUID, session: Session):
+    def get_order_by_id(id: UUID, session: Session, auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="É preciso estar logado para acessar as informações")
+        
         order = session.query(Order).filter(Order.id == id).first()
         if not order:
             raise HTTPException(status_code=404, detail="Pedido não encontrado")
+        
+        if auth_user.id != order.user_id and not auth_user.is_admin:
+            raise HTTPException(status_code=403, detail="Operação não autorizada")
+        
         return order
 
-    def cancel_order(id: UUID, session: Session):
+    def cancel_order(id: UUID, session: Session, auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="É preciso estar logado para acessar as informações")
         order = session.query(Order).filter(Order.id == id).first()
         if not order:
             raise HTTPException(status_code=404, detail="Pedido não encontrado")
+        
+        if auth_user.is_admin == False and auth_user != order.user_id:
+            raise HTTPException(status_code=403, detail="Operação não autorizada")
         
         if order.status == OrderStatus.DELIVERED:
             raise HTTPException(status_code=400, detail="Não é permitido cancelar um pedido já entregue")
@@ -67,7 +90,11 @@ class OrderService:
         session.commit()
         return order
 
-    def delivered_order(id: UUID, session: Session):
+    def delivered_order(id: UUID, session: Session, auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="É preciso estar logado para acessar as informações")
+        if not auth_user.is_admin:
+            raise HTTPException(status_code=403, detail="Apenas admins podem realizar a operação")
         order = session.query(Order).filter(Order.id == id).first()
         if not order:
             raise HTTPException(status_code=404, detail="Pedido não encontrado")

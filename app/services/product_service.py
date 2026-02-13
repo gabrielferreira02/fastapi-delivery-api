@@ -5,6 +5,7 @@ from app.models.product import Product
 from app.models.category import Category
 from app.core.vars import UPLOAD_DIR
 from app.schemas.product_schemas import UpdateProductSchema
+from app.models.user import User
 import os
 import shutil
 
@@ -33,7 +34,12 @@ class ProductService:
                         price: float,
                         category_id: UUID,
                         image: UploadFile,
-                        session: Session):
+                        session: Session,
+                        auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="Não autenticado")
+        if auth_user.is_admin == False:
+            raise HTTPException(status_code=403, detail="Apenas admins podem realizar essa operação")
         if not name:
             raise HTTPException(status_code=400, detail="Nome do produto inválido")
         if not slug:
@@ -82,7 +88,12 @@ class ProductService:
 
     def update_product(slug: str, 
                         body: UpdateProductSchema,
-                        session: Session):
+                        session: Session,
+                        auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="Não autenticado")
+        if auth_user.is_admin == False:
+            raise HTTPException(status_code=403, detail="Apenas admins podem realizar essa operação")
         if not body.name:
             raise HTTPException(status_code=400, detail="Nome do produto inválido")
         if not body.slug:
@@ -120,7 +131,12 @@ class ProductService:
 
     def update_product_image(slug: str,
                             image: UploadFile,
-                            session: Session):
+                            session: Session,
+                            auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="Não autenticado")
+        if auth_user.is_admin == False:
+            raise HTTPException(status_code=403, detail="Apenas admins podem realizar essa operação")
         if not image.content_type.startswith("image/"):
             raise HTTPException(status_code=400, detail="Arquivo precisa ser uma imagem")
     
@@ -148,7 +164,12 @@ class ProductService:
                 os.remove(filepath)
             raise HTTPException(status_code=500, detail="Erro do servidor")
 
-    def deactivate_product(slug: str, session: Session):
+    def deactivate_product(slug: str, session: Session, auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="Não autenticado")
+        if auth_user.is_admin == False:
+            raise HTTPException(status_code=403, detail="Apenas admins podem realizar essa operação")
+        
         product = session.query(Product).filter(Product.slug==slug).first()
 
         if not product:
@@ -157,7 +178,12 @@ class ProductService:
         product.is_active = False
         session.commit()
 
-    def activate_product(slug: str, session: Session):
+    def activate_product(slug: str, session: Session, auth_user: User):
+        if not auth_user:
+            raise HTTPException(status_code=401, detail="Não autenticado")
+        if auth_user.is_admin == False:
+            raise HTTPException(status_code=403, detail="Apenas admins podem realizar essa operação")
+        
         product = session.query(Product).filter(Product.slug==slug).first()
 
         if not product:
