@@ -7,7 +7,7 @@ class UserService:
     
     def get_user_data(id: UUID, session: Session, auth_user: User):
         if not auth_user:
-            raise HTTPException(status_code=403, detail="Acesso negado")
+            raise HTTPException(status_code=401, detail="Acesso negado")
         
         user = session.query(User).filter(User.id == id).first()
 
@@ -21,7 +21,7 @@ class UserService:
 
     def delete_account(id: UUID, session: Session, auth_user: User):
         if not auth_user:
-            raise HTTPException(status_code=403, detail="Acesso negado")
+            raise HTTPException(status_code=401, detail="Acesso negado")
         
         user = session.query(User).filter(User.id == id).first()
 
