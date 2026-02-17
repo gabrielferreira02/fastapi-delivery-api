@@ -93,7 +93,7 @@ class CategoryService:
     
         category = session.query(Category).filter(Category.slug==slug).first()
         if not category:
-            raise HTTPException(status_code=400, detail="Categoria não encontrada")
+            raise HTTPException(status_code=404, detail="Categoria não encontrada")
         
 
         try:
