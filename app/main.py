@@ -1,14 +1,9 @@
 from fastapi import FastAPI
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
 app.mount("/images", StaticFiles(directory="app/uploads/images"), name="images")
-
-bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login-docs")
 
 from app.api.routes.auth_routes import auth_router
 from app.api.routes.user_routes import user_router

@@ -4,7 +4,7 @@ from app.models.user import User
 from fastapi import Depends, HTTPException
 from jose import jwt, JWTError
 from app.core.vars import SECRET_KEY, ALGORITHM
-from app.main import oauth2_schema
+from app.core.security import oauth2_schema
 from uuid import UUID
 
 def get_session():

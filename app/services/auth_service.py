@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from app.schemas.auth_schemas import RegisterSchema, LoginSchema, AuthResponseSchema
 from fastapi import HTTPException
 from app.models.user import User
-from app.main import bcrypt_context
+from app.core.security import bcrypt_context
 from datetime import timedelta, datetime, timezone
 from app.core.vars import JWT_EXPIRATION_TIME, SECRET_KEY, ALGORITHM
 from jose import jwt
