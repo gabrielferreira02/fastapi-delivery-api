@@ -55,7 +55,7 @@ class ProductService:
         
         exist_product = session.query(Product).filter(Product.slug == slug).first()
         if exist_product:
-            raise HTTPException()
+            raise HTTPException(status_code=400, detail="Já existe produto cadastrado com esse")
         
         exist_category = session.query(Category).filter(Category.id == category_id).first()
 
@@ -142,7 +142,7 @@ class ProductService:
     
         product = session.query(Product).filter(Product.slug==slug).first()
         if not product:
-            raise HTTPException(status_code=400, detail="Produto não encontrado")
+            raise HTTPException(status_code=404, detail="Produto não encontrado")
         
         try:
             filepath = os.path.join(UPLOAD_DIR, product.image_url)
