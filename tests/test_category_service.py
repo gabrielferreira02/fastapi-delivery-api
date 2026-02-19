@@ -73,7 +73,7 @@ def test_create_category_fail_because_user_is_not_admin(db_session, create_user,
 
     assert exc.value.status_code == 403
 
-def test_create_category_fail_because_user_not_authenticated(db_session, create_user, tmp_path, monkeypatch):
+def test_create_category_fail_because_user_not_authenticated(db_session, tmp_path, monkeypatch):
     monkeypatch.setattr("app.services.category_service.UPLOAD_DIR", tmp_path)
 
     image = create_fake_image()
@@ -155,7 +155,7 @@ def test_delete_category_fail_because_user_is_not_admin(db_session, create_user)
     
     assert exc.value.status_code == 403
 
-def test_delete_category_fail_because_user_not_authenticated(db_session, create_user):
+def test_delete_category_fail_because_user_not_authenticated(db_session):
     with pytest.raises(HTTPException) as exc:
         CategoryService.delete_category("teste", db_session, None)
     
@@ -260,7 +260,7 @@ def test_update_category_image_success(db_session, create_user, tmp_path, monkey
 
     assert result is not None
 
-def test_update_category_image_fail_with_not_authenticated_user(db_session, create_user):
+def test_update_category_image_fail_with_not_authenticated_user(db_session):
     with pytest.raises(HTTPException) as exc:
         CategoryService.update_category_image("teste", None, db_session, None)
 
