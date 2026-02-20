@@ -1,4 +1,14 @@
 services:
+  api:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - uploads_data:/app/app/uploads
+    env_file:
+      - .env
   db:
     image: postgres:14
     environment:
@@ -12,3 +22,4 @@ services:
 
 volumes:
   pgdata:
+  uploads_data:
