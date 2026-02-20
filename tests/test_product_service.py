@@ -324,8 +324,7 @@ def test_update_product_fail_with_already_exists_new_slug(db_session, create_use
         ProductService.update_product("test", schema, db_session, admin)
 
     assert exc.value.status_code == 400
-
-# falta testar criar produto e atualizar imagem
+    
 def test_create_product_success(db_session, create_user, tmp_path, monkeypatch):
     admin = create_user(db_session)
     admin.is_admin = True
