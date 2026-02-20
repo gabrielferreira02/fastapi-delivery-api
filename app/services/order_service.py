@@ -26,6 +26,7 @@ class OrderService:
         
         order = Order(user.id, OrderStatus.OPEN)
         session.add(order)
+        session.flush()
         
         product_ids = [item.id for item in body.items]
         products = session.query(Product).filter(Product.id.in_(product_ids)).all()
@@ -55,7 +56,7 @@ class OrderService:
     def list_user_orders(id: UUID, session: Session, auth_user: User):
         if not auth_user:
             raise HTTPException(status_code=401, detail="É preciso estar logado para acessar as informações")
-        if not auth_user.is_admin and auth_user != id:
+        if not auth_user.is_admin and auth_user.id != id:
             raise HTTPException(status_code=403, detail="Acesso não permitido as informações")
         
         orders = session.query(Order).filter(Order.user_id == id).all()
@@ -81,7 +82,7 @@ class OrderService:
         if not order:
             raise HTTPException(status_code=404, detail="Pedido não encontrado")
         
-        if auth_user.is_admin == False and auth_user != order.user_id:
+        if auth_user.is_admin == False and auth_user.id != order.user_id:
             raise HTTPException(status_code=403, detail="Operação não autorizada")
         
         if order.status == OrderStatus.DELIVERED:
