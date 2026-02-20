@@ -14,25 +14,25 @@ async def create_order(body: CreateOrderSchema,
                        user: User = Depends(verify_token)):
     return OrderService.create_order(body, session, user)
 
-@order_router.get("{id}", response_model=OrderResponseSchema)
+@order_router.get("/{id}", response_model=OrderResponseSchema)
 async def get_order_by_id(id: UUID, 
                           session: Session = Depends(get_session),
                           user: User = Depends(verify_token)):
     return OrderService.get_order_by_id(id, session, user)
 
-@order_router.get("user/{id}", response_model=list[OrderResponseSchema])
+@order_router.get("/user/{id}", response_model=list[OrderResponseSchema])
 async def get_user_orders(id: UUID, 
                           session: Session = Depends(get_session),
                           user: User = Depends(verify_token)):
     return OrderService.list_user_orders(id, session, user)
 
-@order_router.patch("{id}/cancel", response_model=OrderResponseSchema)
+@order_router.patch("/{id}/cancel", response_model=OrderResponseSchema)
 async def cancel_order(id: UUID, 
                        session: Session = Depends(get_session),
                        user: User = Depends(verify_token)):
     return OrderService.cancel_order(id, session, user)
 
-@order_router.patch("{id}/delivered", response_model=OrderResponseSchema)
+@order_router.patch("/{id}/delivered", response_model=OrderResponseSchema)
 async def delivery_order(id: UUID, 
                          session: Session = Depends(get_session),
                          user: User = Depends(verify_token)):

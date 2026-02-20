@@ -8,10 +8,10 @@ from app.models.user import User
 
 user_router = APIRouter(prefix="/user", tags=["User"])
 
-@user_router.get("{id}", response_model=UserResponseSchema)
+@user_router.get("/{id}", response_model=UserResponseSchema)
 async def get_user_data(id: UUID, session: Session = Depends(get_session), user: User = Depends(verify_token)):
     return UserService.get_user_data(id, session, user)
 
-@user_router.delete("{id}")
+@user_router.delete("/{id}")
 async def delete_account(id: UUID, session: Session = Depends(get_session), user: User = Depends(verify_token)):
     return UserService.delete_account(id, session, user)
